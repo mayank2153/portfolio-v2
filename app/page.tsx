@@ -1,7 +1,6 @@
-// app/page.tsx
 "use client";
-import SplitText from "@/components/ui/split-text";
-import { useState, useEffect, useRef } from "react";
+
+import { useState, useEffect, useRef, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Moon,
@@ -17,10 +16,12 @@ import {
   Linkedin,
   Link as LinkIcon,
 } from "lucide-react";
+import SplitText from "@/components/ui/split-text";
 import { ExpandedTabs } from "@/components/ui/expanded-tabs";
 import ShareButton from "@/components/ui/share-button";
-import { cn } from "@/lib/utils";
 import { Spotlight } from "@/components/ui/spotlight";
+import { cn } from "@/lib/utils";
+import { DarkModeContext } from "@/app/layout"; // ✅ Import from layout
 
 const tabs = [
   { title: "Dashboard", icon: Home },
@@ -55,7 +56,8 @@ const shareLinks = [
 ];
 
 export default function HomePage() {
-  const [isDark, setIsDark] = useState(true);
+  const { isDark, toggleDark } = useContext(DarkModeContext); // ✅ Use context
+
   const [showCards, setShowCards] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionOrigin, setTransitionOrigin] = useState({ x: 0, y: 0 });
@@ -66,7 +68,7 @@ export default function HomePage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const toggleTheme = () => {
+  const handleToggleTheme = () => {
     if (themeButtonRef.current) {
       const rect = themeButtonRef.current.getBoundingClientRect();
       setTransitionOrigin({
@@ -77,15 +79,8 @@ export default function HomePage() {
 
     setIsTransitioning(true);
 
-    // Change theme after a short delay to sync with animation
-    setTimeout(() => {
-      setIsDark(!isDark);
-    }, 300);
-
-    // End transition
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 800);
+    setTimeout(() => toggleDark(), 300);
+    setTimeout(() => setIsTransitioning(false), 800);
   };
 
   const cardData = [
@@ -104,8 +99,8 @@ export default function HomePage() {
         : "from-violet-400 to-purple-400",
     },
     {
-      id: "writing",
-      title: "Blog",
+      id: "experience",
+      title: "Experience",
       gradient: isDark
         ? "from-blue-500 to-purple-400"
         : "from-blue-400 to-indigo-400",
@@ -152,16 +147,15 @@ export default function HomePage() {
         )}
       </AnimatePresence>
 
-      {/* Spotlight */}
       <Spotlight isDark={isDark} />
 
-      {/* Top‑right controls */}
+      {/* Top-right controls */}
       <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-10 flex items-center space-x-2 sm:space-x-3">
         <ShareButton className="" links={shareLinks} />
 
         <button
           ref={themeButtonRef}
-          onClick={toggleTheme}
+          onClick={handleToggleTheme}
           className={cn(
             "p-2 rounded-full cursor-pointer transition-all duration-300 relative overflow-hidden",
             isDark
@@ -254,7 +248,7 @@ export default function HomePage() {
             transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
             className="flex flex-wrap justify-center gap-6 mb-20"
           >
-            {["Resume", "Blog", "Github", "LinkedIn"].map((link) => (
+            {["Resume", "X", "Github", "LinkedIn"].map((link) => (
               <motion.a
                 key={link}
                 href="#"
