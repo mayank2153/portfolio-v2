@@ -200,7 +200,6 @@ export default function HomePage() {
               "text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif mb-6 sm:mb-8 leading-tight",
               isDark ? "text-white" : "text-gray-900"
             )}
-            style={{ fontFamily: "Playfair Display, serif" }}
           >
             <SplitText
               text="Hey, I'm Mayank."

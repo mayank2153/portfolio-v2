@@ -8,12 +8,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-});
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-
 export const DarkModeContext = createContext<{
   isDark: boolean;
   toggleDark: () => void;
@@ -30,7 +24,13 @@ export default function RootLayout({
   const [isDark, setIsDark] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionOrigin, setTransitionOrigin] = useState({ x: 0, y: 0 });
+  const [clipRadius, setClipRadius] = useState(0);
+  const [hasHydrated, setHasHydrated] = useState(false);
   const themeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    setHasHydrated(true); // delay transition logic until hydration completes
+  }, []);
 
   const toggleDark = () => {
     if (themeButtonRef.current) {
@@ -41,7 +41,15 @@ export default function RootLayout({
       });
     }
 
+    // Only read window sizes on the client
+    const radius =
+      typeof window !== "undefined"
+        ? Math.max(window.innerWidth, window.innerHeight) * 1.5
+        : 0;
+
+    setClipRadius(radius);
     setIsTransitioning(true);
+
     setTimeout(() => setIsDark((prev) => !prev), 300);
     setTimeout(() => setIsTransitioning(false), 800);
   };
@@ -50,16 +58,16 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          `${playfair.variable} ${inter.variable} font-sans antialiased transition-colors duration-300`,
+          `font-serif antialiased transition-colors duration-300`,
           isDark ? "bg-black text-white" : "bg-slate-50 text-gray-900"
         )}
+        style={{ fontFamily: "Playfair Display, serif" }}
       >
         <DarkModeContext.Provider value={{ isDark, toggleDark }}>
           <Spotlight isDark={isDark} />
 
-          {/* Page transition animation */}
           <AnimatePresence>
-            {isTransitioning && (
+            {hasHydrated && isTransitioning && (
               <motion.div
                 className={cn(
                   "fixed inset-0 z-50 pointer-events-none",
@@ -74,9 +82,7 @@ export default function RootLayout({
                   clipPath: `circle(0px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
                 }}
                 animate={{
-                  clipPath: `circle(${
-                    Math.max(window.innerWidth, window.innerHeight) * 1.5
-                  }px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
+                  clipPath: `circle(${clipRadius}px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
                 }}
                 exit={{
                   clipPath: `circle(0px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
@@ -127,7 +133,6 @@ export default function RootLayout({
             </button>
           </div>
 
-          {/* App content */}
           {children}
         </DarkModeContext.Provider>
       </body>
