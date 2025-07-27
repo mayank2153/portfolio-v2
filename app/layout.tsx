@@ -7,6 +7,31 @@ import { Moon, Sun } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import "./globals.css";
+import ShareButton from "@/components/ui/share-button";
+import { Twitter, Facebook, Linkedin, Link as LinkIcon } from "lucide-react";
+
+const shareLinks = [
+  {
+    icon: Twitter,
+    onClick: () => window.open("https://twitter.com/share"),
+    label: "Share on Twitter",
+  },
+  {
+    icon: Facebook,
+    onClick: () => window.open("https://facebook.com/share"),
+    label: "Share on Facebook",
+  },
+  {
+    icon: Linkedin,
+    onClick: () => window.open("https://linkedin.com/share"),
+    label: "Share on LinkedIn",
+  },
+  {
+    icon: LinkIcon,
+    onClick: () => navigator.clipboard.writeText(window.location.href),
+    label: "Copy link",
+  },
+];
 
 export const DarkModeContext = createContext<{
   isDark: boolean;
@@ -66,37 +91,10 @@ export default function RootLayout({
         <DarkModeContext.Provider value={{ isDark, toggleDark }}>
           <Spotlight isDark={isDark} />
 
-          <AnimatePresence>
-            {hasHydrated && isTransitioning && (
-              <motion.div
-                className={cn(
-                  "fixed inset-0 z-50 pointer-events-none",
-                  !isDark
-                    ? "bg-black"
-                    : "bg-gradient-to-br from-slate-100 to-blue-50"
-                )}
-                style={{
-                  clipPath: `circle(0px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
-                }}
-                initial={{
-                  clipPath: `circle(0px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
-                }}
-                animate={{
-                  clipPath: `circle(${clipRadius}px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
-                }}
-                exit={{
-                  clipPath: `circle(0px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
-                }}
-                transition={{
-                  duration: 1.2,
-                  ease: [0.25, 0.46, 0.45, 0.94],
-                }}
-              />
-            )}
-          </AnimatePresence>
+          {/* Top-right controls - ShareButton and Theme Toggle side by side */}
+          <div className="fixed top-4 sm:top-6 right-4 sm:right-6 z-50 flex items-center space-x-2 sm:space-x-3">
+            <ShareButton className="" links={shareLinks} />
 
-          {/* Top-right theme toggle */}
-          <div className="fixed top-4 sm:top-6 right-4 sm:right-6 z-50">
             <button
               ref={themeButtonRef}
               onClick={toggleDark}
@@ -132,6 +130,35 @@ export default function RootLayout({
               </AnimatePresence>
             </button>
           </div>
+
+          <AnimatePresence>
+            {hasHydrated && isTransitioning && (
+              <motion.div
+                className={cn(
+                  "fixed inset-0 z-40 pointer-events-none",
+                  !isDark
+                    ? "bg-black"
+                    : "bg-gradient-to-br from-slate-100 to-blue-50"
+                )}
+                style={{
+                  clipPath: `circle(0px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
+                }}
+                initial={{
+                  clipPath: `circle(0px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
+                }}
+                animate={{
+                  clipPath: `circle(${clipRadius}px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
+                }}
+                exit={{
+                  clipPath: `circle(0px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
+                }}
+                transition={{
+                  duration: 1.2,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+              />
+            )}
+          </AnimatePresence>
 
           {children}
         </DarkModeContext.Provider>

@@ -11,9 +11,6 @@ import {
   Settings,
   HelpCircle,
   Shield,
-  Twitter,
-  Facebook,
-  Linkedin,
   Link as LinkIcon,
 } from "lucide-react";
 import SplitText from "@/components/ui/split-text";
@@ -21,7 +18,7 @@ import { ExpandedTabs } from "@/components/ui/expanded-tabs";
 import ShareButton from "@/components/ui/share-button";
 import { Spotlight } from "@/components/ui/spotlight";
 import { cn } from "@/lib/utils";
-import { DarkModeContext } from "@/app/layout"; // ✅ Import from layout
+import { DarkModeContext } from "@/app/layout";
 
 const tabs = [
   { title: "Dashboard", icon: Home },
@@ -30,29 +27,6 @@ const tabs = [
   { title: "Settings", icon: Settings },
   { title: "Support", icon: HelpCircle },
   { title: "Security", icon: Shield },
-];
-
-const shareLinks = [
-  {
-    icon: Twitter,
-    onClick: () => window.open("https://twitter.com/share"),
-    label: "Share on Twitter",
-  },
-  {
-    icon: Facebook,
-    onClick: () => window.open("https://facebook.com/share"),
-    label: "Share on Facebook",
-  },
-  {
-    icon: Linkedin,
-    onClick: () => window.open("https://linkedin.com/share"),
-    label: "Share on LinkedIn",
-  },
-  {
-    icon: LinkIcon,
-    onClick: () => navigator.clipboard.writeText(window.location.href),
-    label: "Copy link",
-  },
 ];
 
 export default function HomePage() {
@@ -150,44 +124,6 @@ export default function HomePage() {
       <Spotlight isDark={isDark} />
 
       {/* Top-right controls */}
-      <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-10 flex items-center space-x-2 sm:space-x-3">
-        <ShareButton className="" links={shareLinks} />
-
-        <button
-          ref={themeButtonRef}
-          onClick={handleToggleTheme}
-          className={cn(
-            "p-2 rounded-full cursor-pointer transition-all duration-300 relative overflow-hidden",
-            isDark
-              ? "bg-white/10 hover:bg-white/20 text-white shadow-lg"
-              : "bg-white/80 hover:bg-white text-gray-700 shadow-lg backdrop-blur-sm border border-white/20"
-          )}
-        >
-          <AnimatePresence mode="wait">
-            {isDark ? (
-              <motion.div
-                key="sun"
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Sun className="h-5 w-5" />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="moon"
-                initial={{ rotate: 90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: -90, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Moon className="h-5 w-5" />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </button>
-      </div>
 
       {/* Main content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
