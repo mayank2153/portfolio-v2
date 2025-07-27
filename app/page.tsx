@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import SplitText from "@/components/ui/split-text";
 import { ExpandedTabs } from "@/components/ui/expanded-tabs";
-import ShareButton from "@/components/ui/share-button";
+import SlideButton from "@/components/ui/slide-button";
 import { Spotlight } from "@/components/ui/spotlight";
 import { cn } from "@/lib/utils";
 import { DarkModeContext } from "@/app/layout";
@@ -126,7 +126,7 @@ export default function HomePage() {
       {/* Top-right controls */}
 
       {/* Main content */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20">
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -321,6 +321,33 @@ export default function HomePage() {
             </AnimatePresence>
           </div>
         </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="flex flex-col items-center justify-center  mb-8"
+        >
+          <motion.p
+            className={cn(
+              "text-lg mb-1 font-medium",
+              isDark ? "text-gray-300" : "text-gray-600"
+            )}
+          >
+            Slide to see all my projects
+          </motion.p>
+          <SlideButton
+            className={cn(
+              "transition-all duration-300 pt-0"
+              // isDark
+              //   ? "bg-white/10 hover:bg-white/20 text-white"
+              //   : "bg-gray-900 hover:bg-gray-800 text-white"
+            )}
+            onClick={() => {
+              // Handle navigation to projects page
+              console.log("Navigate to projects");
+            }}
+          />
+        </motion.div>
       </div>
     </div>
   );
