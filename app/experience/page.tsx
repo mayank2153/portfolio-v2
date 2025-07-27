@@ -7,6 +7,7 @@ import { DarkModeContext } from "@/app/layout";
 import { cn } from "@/lib/utils";
 import { Home, Bell, Settings, HelpCircle, Shield } from "lucide-react";
 import { useExperienceData } from "./data";
+import { Spotlight } from "@/components/ui/spotlight";
 const tabs = [
   { title: "Dashboard", icon: Home },
   { title: "Notifications", icon: Bell },
@@ -25,9 +26,10 @@ const Experience = () => {
         "min-h-screen relative overflow-hidden",
         isDark
           ? "bg-black text-white"
-          : "bg-gradient-to-br from-slate-50 to-blue-50 text-gray-900"
+          : "bg-gradient-to-br from-slate-200 to-blue-100 text-gray-900"
       )}
     >
+      <Spotlight isDark={isDark} />
       {/* Main content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <motion.div

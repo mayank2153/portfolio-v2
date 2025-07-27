@@ -18,6 +18,9 @@ interface ActionTab {
   icon: LucideIcon;
   onClick: () => void;
   type: "action";
+  // New properties for dynamic text
+  successText?: string;
+  successDuration?: number;
 }
 
 interface Separator {
@@ -32,6 +35,28 @@ interface NavigationDockProps {
   isDark?: boolean;
 }
 
+// Smooth animation configuration with longer hover duration
+const ANIMATION_CONFIG = {
+  duration: 0.2,
+  ease: [0.4, 0, 0.2, 1] as const,
+};
+
+const HOVER_ANIMATION_CONFIG = {
+  duration: 0.4,
+  ease: [0.25, 0.46, 0.45, 0.94] as const,
+};
+
+const TEXT_CHANGE_ANIMATION = {
+  duration: 0.3,
+  ease: [0.25, 0.46, 0.45, 0.94] as const,
+};
+
+const SPRING_CONFIG = {
+  type: "spring" as const,
+  stiffness: 300,
+  damping: 35,
+};
+
 export function NavigationDock({
   tabs,
   className,
@@ -40,7 +65,9 @@ export function NavigationDock({
   const router = useRouter();
   const pathname = usePathname();
   const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
-  const [clickedIndex, setClickedIndex] = React.useState<number | null>(null);
+  const [changedTextTabs, setChangedTextTabs] = React.useState<
+    Map<number, string>
+  >(new Map());
 
   // Get active tab index based on current pathname
   const activeIndex = React.useMemo(() => {
@@ -55,36 +82,37 @@ export function NavigationDock({
       if (tab.type === "navigation") {
         router.push(tab.href);
       } else if (tab.type === "action") {
-        // Visual feedback for action buttons
-        setClickedIndex(index);
         tab.onClick();
 
-        // Reset click state after animation
-        setTimeout(() => setClickedIndex(null), 300);
+        // Handle dynamic text change
+        if (tab.successText) {
+          setChangedTextTabs(
+            (prev) => new Map(prev.set(index, tab.successText!))
+          );
+
+          // Reset text after specified duration
+          const duration = tab.successDuration || 2000;
+          setTimeout(() => {
+            setChangedTextTabs((prev) => {
+              const newMap = new Map(prev);
+              newMap.delete(index);
+              return newMap;
+            });
+          }, duration);
+        }
       }
     },
     [router]
   );
 
-  const handleMouseEnter = React.useCallback((index: number) => {
-    setHoveredIndex(index);
-  }, []);
-
-  const handleMouseLeave = React.useCallback(() => {
-    setHoveredIndex(null);
-  }, []);
-
   const SeparatorComponent = React.memo(() => (
     <motion.div
       initial={{ opacity: 0, scaleY: 0 }}
       animate={{ opacity: 1, scaleY: 1 }}
-      transition={{
-        duration: 0.2,
-        ease: "easeOut",
-      }}
+      transition={ANIMATION_CONFIG}
       className={cn(
-        "h-8 w-px mx-2 self-center",
-        isDark ? "bg-white/20" : "bg-black/20"
+        "h-6 w-px mx-1 self-center",
+        isDark ? "bg-gray-600" : "bg-gray-300"
       )}
       aria-hidden="true"
     />
@@ -92,17 +120,17 @@ export function NavigationDock({
 
   return (
     <motion.nav
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{
-        duration: 0.4,
-        ease: [0.25, 0.46, 0.45, 0.94],
+        duration: 0.3,
+        ease: ANIMATION_CONFIG.ease,
       }}
       className={cn(
-        "flex items-center gap-1 rounded-2xl backdrop-blur-md border shadow-xl p-2",
+        "flex items-center gap-1  rounded-2xl backdrop-blur-md border p-2",
         isDark
-          ? "bg-black/20 border-white/10 shadow-black/50"
-          : "bg-white/80 border-black/10 shadow-gray-900/20",
+          ? "bg-gray-900/90 border-gray-700/50 shadow-xl shadow-black/20"
+          : "bg-white/90 border-gray-200/50 shadow-xl shadow-gray-900/10",
         className
       )}
       role="navigation"
@@ -116,109 +144,96 @@ export function NavigationDock({
         const Icon = tab.icon;
         const isHovered = hoveredIndex === index;
         const isActive = activeIndex === index;
-        const isClicked = clickedIndex === index;
+        const changedText = changedTextTabs.get(index);
+        const displayText = changedText || tab.title;
+        const hasTextChanged = Boolean(changedText);
 
         return (
           <motion.button
             key={`${tab.type}-${tab.title}-${index}`}
-            onMouseEnter={() => handleMouseEnter(index)}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
             onClick={() => handleTabClick(tab, index)}
             className={cn(
-              "relative flex items-center justify-center rounded-xl transition-all duration-200 overflow-hidden group focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+              "relative flex items-center justify-center rounded-xl overflow-hidden",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
               isDark
-                ? "focus-visible:ring-white/50 focus-visible:ring-offset-black/20"
-                : "focus-visible:ring-black/50 focus-visible:ring-offset-white/20"
+                ? "focus-visible:ring-gray-400 focus-visible:ring-offset-gray-900"
+                : "focus-visible:ring-gray-500 focus-visible:ring-offset-white"
             )}
             whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.1 }}
-            aria-label={tab.title}
+            transition={SPRING_CONFIG}
+            aria-label={displayText}
             role={tab.type === "navigation" ? "tab" : "button"}
             aria-current={isActive ? "page" : undefined}
           >
-            {/* Background with smooth transitions */}
+            {/* Single background layer for cleaner animations */}
             <motion.div
               className={cn(
                 "absolute inset-0 rounded-xl",
                 isActive
                   ? isDark
-                    ? "bg-white/20 shadow-lg shadow-white/10"
-                    : "bg-white/90 shadow-lg shadow-black/10"
+                    ? "bg-gray-700/80"
+                    : "bg-gray-100"
                   : "bg-transparent"
               )}
               animate={{
                 backgroundColor: isActive
                   ? isDark
-                    ? "rgba(255, 255, 255, 0.2)"
-                    : "rgba(255, 255, 255, 0.9)"
-                  : isHovered
+                    ? "rgb(55 65 81 / 0.8)"
+                    : "rgb(243 244 246)"
+                  : isHovered || hasTextChanged
                   ? isDark
-                    ? "rgba(255, 255, 255, 0.1)"
-                    : "rgba(255, 255, 255, 0.5)"
-                  : "rgba(255, 255, 255, 0)",
+                    ? "rgb(75 85 99 / 0.5)"
+                    : "rgb(249 250 251)"
+                  : "transparent",
+                scale: isHovered || hasTextChanged ? 1.02 : 1,
               }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
+              transition={HOVER_ANIMATION_CONFIG}
             />
 
-            {/* Hover glow effect */}
+            {/* Content container */}
             <motion.div
-              className={cn(
-                "absolute inset-0 rounded-xl opacity-0",
-                isDark
-                  ? "bg-gradient-to-r from-blue-500/30 to-purple-500/30"
-                  : "bg-gradient-to-r from-blue-500/20 to-purple-500/20"
-              )}
+              className="flex items-center relative z-10 px-3 py-2.5"
               animate={{
-                opacity: isHovered && !isActive ? 0.6 : 0,
+                width: isHovered || hasTextChanged ? "auto" : "2.75rem",
               }}
-              transition={{ duration: 0.2 }}
-            />
-
-            {/* Content container with smooth expansion */}
-            <motion.div
-              className="flex items-center relative z-10 px-3 py-2"
-              animate={{
-                width: isHovered ? "auto" : "2.5rem",
-              }}
-              transition={{
-                duration: 0.3,
-                ease: [0.25, 0.46, 0.45, 0.94],
-              }}
+              transition={HOVER_ANIMATION_CONFIG}
             >
-              {/* Icon with subtle active animation */}
+              {/* Icon */}
               <motion.div
                 animate={{
-                  scale: isActive ? 1.05 : isClicked ? 0.9 : 1,
-                  rotate: isClicked ? [0, -5, 5, 0] : 0,
+                  scale: hasTextChanged ? 1.1 : 1,
+                  rotate: hasTextChanged ? [0, -5, 5, 0] : 0,
                 }}
-                transition={{
-                  duration: isClicked ? 0.3 : 0.2,
-                  ease: "easeOut",
-                }}
+                transition={TEXT_CHANGE_ANIMATION}
               >
                 <Icon
-                  size={20}
+                  size={18}
                   className={cn(
-                    "transition-colors duration-200 flex-shrink-0",
+                    "transition-colors flex-shrink-0",
                     isActive
                       ? isDark
-                        ? "text-white drop-shadow-sm"
+                        ? "text-gray-100"
                         : "text-gray-900"
-                      : isHovered
+                      : isHovered || hasTextChanged
                       ? isDark
-                        ? "text-white"
-                        : "text-gray-900"
+                        ? "text-gray-200"
+                        : "text-gray-700"
                       : isDark
-                      ? "text-white/70"
-                      : "text-gray-600"
+                      ? "text-gray-400"
+                      : "text-gray-500"
                   )}
+                  style={{
+                    transition: `color ${HOVER_ANIMATION_CONFIG.duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
+                  }}
                 />
               </motion.div>
 
-              {/* Smooth text reveal */}
+              {/* Text label with smooth text change animation */}
               <AnimatePresence mode="wait">
-                {isHovered && (
-                  <motion.span
+                {(isHovered || hasTextChanged) && (
+                  <motion.div
                     initial={{
                       opacity: 0,
                       width: 0,
@@ -235,59 +250,71 @@ export function NavigationDock({
                       marginLeft: 0,
                     }}
                     transition={{
-                      duration: 0.2,
-                      ease: "easeOut",
+                      duration: 0.35,
+                      ease: [0.25, 0.46, 0.45, 0.94],
                     }}
-                    className={cn(
-                      "whitespace-nowrap text-sm font-medium overflow-hidden",
-                      isActive
-                        ? isDark
-                          ? "text-white"
-                          : "text-gray-900"
-                        : isDark
-                        ? "text-white/90"
-                        : "text-gray-800"
-                    )}
+                    className="overflow-hidden"
                   >
-                    {tab.title}
-                  </motion.span>
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={displayText}
+                        initial={{
+                          opacity: 0,
+                          y: hasTextChanged ? -10 : 0,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          y: 0,
+                        }}
+                        exit={{
+                          opacity: 0,
+                          y: hasTextChanged ? 10 : 0,
+                        }}
+                        transition={TEXT_CHANGE_ANIMATION}
+                        className={cn(
+                          "whitespace-nowrap text-sm font-medium block",
+                          isActive
+                            ? isDark
+                              ? "text-gray-100"
+                              : "text-gray-900"
+                            : isDark
+                            ? "text-gray-200"
+                            : "text-gray-700"
+                        )}
+                      >
+                        {displayText}
+                      </motion.span>
+                    </AnimatePresence>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </motion.div>
 
-            {/* Active indicator */}
+            {/* Active indicator dot */}
             <AnimatePresence>
               {isActive && (
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0, opacity: 0 }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  transition={SPRING_CONFIG}
                   className={cn(
-                    "absolute top-1 right-1 w-2 h-2 rounded-full",
-                    isDark
-                      ? "bg-blue-400 shadow-sm shadow-blue-400/50"
-                      : "bg-blue-500"
+                    "absolute top-2 right-2 w-1.5 h-1.5 rounded-full",
+                    isDark ? "bg-gray-300" : "bg-gray-600"
                   )}
                 />
               )}
             </AnimatePresence>
 
-            {/* Click ripple effect */}
+            {/* Success indicator for text change */}
             <AnimatePresence>
-              {isClicked && (
+              {hasTextChanged && (
                 <motion.div
-                  initial={{ scale: 0, opacity: 0.3 }}
-                  animate={{
-                    scale: 2,
-                    opacity: 0,
-                  }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                  className={cn(
-                    "absolute inset-0 rounded-xl pointer-events-none",
-                    isDark ? "bg-white/30" : "bg-black/20"
-                  )}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  transition={SPRING_CONFIG}
+                  className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-green-400"
                 />
               )}
             </AnimatePresence>

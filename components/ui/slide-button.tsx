@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { useContext } from "react";
 import { DarkModeContext } from "@/app/layout";
+
 const DRAG_CONSTRAINTS = { left: 0, right: 155 };
 const DRAG_THRESHOLD = 0.9;
 
@@ -32,7 +33,7 @@ const BUTTON_STATES = {
 
 const ANIMATION_CONFIG = {
   spring: {
-    type: "spring",
+    type: "spring" as const,
     stiffness: 400,
     damping: 40,
     mass: 0.8,
@@ -41,25 +42,42 @@ const ANIMATION_CONFIG = {
 
 type StatusIconProps = {
   status: string;
+  isDark: boolean;
 };
 
-const StatusIcon: React.FC<StatusIconProps> = ({ status }) => {
-  const iconMap: Record<StatusIconProps["status"], JSX.Element> = useMemo(
+const StatusIcon: React.FC<StatusIconProps> = ({ status, isDark }) => {
+  const iconMap: Record<string, JSX.Element> = useMemo(
     () => ({
-      loading: <Loader2 className="animate-spin" size={20} />,
-      success: <Check size={20} />,
-      error: <X size={20} />,
+      loading: (
+        <Loader2
+          className={cn(
+            "animate-spin",
+            isDark ? "text-white" : "text-gray-900"
+          )}
+          size={20}
+        />
+      ),
+      success: (
+        <Check
+          className={cn(isDark ? "text-white" : "text-gray-900")}
+          size={20}
+        />
+      ),
+      error: (
+        <X className={cn(isDark ? "text-white" : "text-gray-900")} size={20} />
+      ),
     }),
-    []
+    [isDark]
   );
 
   if (!iconMap[status]) return null;
   return (
     <motion.div
-      key={crypto.randomUUID()}
+      key={`${status}-${isDark}`}
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0 }}
+      exit={{ opacity: 0, scale: 0.5 }}
+      transition={{ duration: 0.2 }}
     >
       {iconMap[status]}
     </motion.div>
@@ -75,19 +93,28 @@ const useButtonStatus = (resolveTo: "success" | "error") => {
     setStatus("loading");
     setTimeout(() => {
       setStatus(resolveTo);
-    }, 2000);
+    }, 1000); // Reduced time for better UX
   }, [resolveTo]);
 
-  return { status, handleSubmit };
+  const reset = useCallback(() => {
+    setStatus("idle");
+  }, []);
+
+  return { status, handleSubmit, reset };
 };
 
-const SlideButton = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, ...props }, ref) => {
+interface SlideButtonProps extends ButtonProps {
+  onSlideComplete?: () => void;
+  resolveTo?: "success" | "error";
+}
+
+const SlideButton = forwardRef<HTMLButtonElement, SlideButtonProps>(
+  ({ className, onSlideComplete, resolveTo = "success", ...props }, ref) => {
     const [isDragging, setIsDragging] = useState(false);
     const [completed, setCompleted] = useState(false);
     const dragHandleRef = useRef<HTMLDivElement | null>(null);
-    const { status, handleSubmit } = useButtonStatus("success");
-    const isDark = useContext(DarkModeContext).isDark;
+    const { status, handleSubmit, reset } = useButtonStatus(resolveTo);
+    const { isDark } = useContext(DarkModeContext);
 
     const dragX = useMotionValue(0);
     const springX = useSpring(dragX, ANIMATION_CONFIG.spring);
@@ -97,12 +124,20 @@ const SlideButton = forwardRef<HTMLButtonElement, ButtonProps>(
       [0, 1]
     );
 
+    // Reset function for external use
+    const resetButton = useCallback(() => {
+      setCompleted(false);
+      setIsDragging(false);
+      dragX.set(0);
+      reset();
+    }, [dragX, reset]);
+
     const handleDragStart = useCallback(() => {
       if (completed) return;
       setIsDragging(true);
     }, [completed]);
 
-    const handleDragEnd = () => {
+    const handleDragEnd = useCallback(() => {
       if (completed) return;
       setIsDragging(false);
 
@@ -110,45 +145,71 @@ const SlideButton = forwardRef<HTMLButtonElement, ButtonProps>(
       if (progress >= DRAG_THRESHOLD) {
         setCompleted(true);
         handleSubmit();
+        // Call the completion handler after a delay to show the success state
+        setTimeout(() => {
+          onSlideComplete?.();
+        }, 1500); // Show success for 1.5s then route
       } else {
         dragX.set(0);
       }
-    };
+    }, [completed, dragProgress, handleSubmit, onSlideComplete, dragX]);
 
-    const handleDrag = (
-      _event: MouseEvent | TouchEvent | PointerEvent,
-      info: PanInfo
-    ) => {
-      if (completed) return;
-      const newX = Math.max(0, Math.min(info.offset.x, DRAG_CONSTRAINTS.right));
-      dragX.set(newX);
-    };
+    const handleDrag = useCallback(
+      (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+        if (completed) return;
+        const newX = Math.max(
+          0,
+          Math.min(info.offset.x, DRAG_CONSTRAINTS.right)
+        );
+        dragX.set(newX);
+      },
+      [completed, dragX]
+    );
 
-    const adjustedWidth = useTransform(springX, (x) => x + 10);
+    const adjustedWidth = useTransform(springX, (x) => x + 40);
 
     return (
       <motion.div
         animate={completed ? BUTTON_STATES.completed : BUTTON_STATES.initial}
-        transition={{
-          type: "spring",
-          stiffness: 400,
-          damping: 40,
-          mass: 0.8,
-        }}
-        className="shadow-button-inset dark:shadow-button-inset-dark relative flex h-9 items-center justify-center rounded-full bg-gray-50/10"
+        transition={ANIMATION_CONFIG.spring}
+        className={cn(
+          "relative flex h-12 items-center justify-center rounded-full transition-all duration-300",
+          // Minimal container styling
+          isDark
+            ? "bg-white/10 backdrop-blur-sm border border-white/20"
+            : "bg-gray-100 border border-gray-200"
+        )}
       >
+        {/* Progress track background - subtle */}
         {!completed && (
           <motion.div
             style={{
               width: adjustedWidth,
             }}
             className={cn(
-              "absolute inset-y-0 left-0 z-0 rounded-full"
-              // isDark ? "bg-white/10" : "bg-gray-900"
+              "absolute inset-y-1 left-1 z-0 rounded-full transition-all duration-200",
+              isDark ? "bg-white/10" : "bg-gray-300/50"
             )}
           />
         )}
-        <AnimatePresence key={crypto.randomUUID()}>
+
+        {/* Slide text */}
+        {/* {!completed && (
+          <motion.div
+            className={cn(
+              "absolute inset-0 flex items-center justify-center text-sm font-medium pointer-events-none z-5",
+              isDark ? "text-white/70" : "text-gray-600"
+            )}
+            animate={{
+              opacity: isDragging ? 0.5 : 1,
+            }}
+          >
+            <span className="ml-8">Slide to continue</span>
+          </motion.div>
+        )} */}
+
+        {/* Draggable handle */}
+        <AnimatePresence>
           {!completed && (
             <motion.div
               ref={dragHandleRef}
@@ -160,7 +221,9 @@ const SlideButton = forwardRef<HTMLButtonElement, ButtonProps>(
               onDragEnd={handleDragEnd}
               onDrag={handleDrag}
               style={{ x: springX }}
-              className="absolute -left-4 z-10 flex cursor-grab items-center justify-start active:cursor-grabbing"
+              className="absolute left-1 z-10 flex cursor-grab items-center justify-start active:cursor-grabbing"
+              whileDrag={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <Button
                 ref={ref}
@@ -168,8 +231,10 @@ const SlideButton = forwardRef<HTMLButtonElement, ButtonProps>(
                 {...props}
                 size="icon"
                 className={cn(
-                  "shadow-button bg-gray-50/20 rounded-full drop-shadow-xl",
-                  isDragging && "scale-105 transition-transform",
+                  "h-10 w-10 rounded-full transition-all duration-200",
+                  isDark
+                    ? "bg-white text-gray-900 hover:bg-gray-100"
+                    : "bg-gray-900 text-white hover:bg-gray-800",
                   className
                 )}
               >
@@ -179,30 +244,55 @@ const SlideButton = forwardRef<HTMLButtonElement, ButtonProps>(
           )}
         </AnimatePresence>
 
-        <AnimatePresence key={crypto.randomUUID()}>
+        {/* Completed state - minimal styling */}
+        <AnimatePresence>
           {completed && (
             <motion.div
-              className="absolute inset-0 flex items-center justify-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              className="absolute inset-1 flex items-center justify-center"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.3 }}
             >
               <Button
                 ref={ref}
                 disabled={status === "loading"}
+                onClick={resetButton}
                 {...props}
                 className={cn(
                   "size-full rounded-full transition-all duration-300",
+                  // Minimal completed state styling
+                  isDark
+                    ? "bg-white/20 hover:bg-white/30 text-white border border-white/20"
+                    : "bg-gray-900 hover:bg-gray-800 text-white",
                   className
                 )}
               >
-                <AnimatePresence key={crypto.randomUUID()} mode="wait">
-                  <StatusIcon status={status} />
+                <AnimatePresence mode="wait">
+                  <StatusIcon status={status} isDark={isDark} />
                 </AnimatePresence>
               </Button>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Subtle loading indicator */}
+        {status === "loading" && (
+          <motion.div
+            className={cn(
+              "absolute inset-0 rounded-full opacity-10",
+              isDark ? "bg-white" : "bg-gray-900"
+            )}
+            animate={{
+              scale: [1, 1.02, 1],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        )}
       </motion.div>
     );
   }

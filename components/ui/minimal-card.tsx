@@ -35,9 +35,9 @@ const MinimalCard = React.forwardRef<HTMLDivElement, MinimalCardProps>(
         ],
         // Dark mode styles
         isDark && [
-          "bg-gray-900/50 backdrop-blur-sm border border-gray-800 hover:bg-gray-800/60",
-          "shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(0,0,0,0.2),0_2px_4px_0_rgba(0,0,0,0.2),0_4px_8px_0_rgba(0,0,0,0.2)]",
-          "hover:shadow-[0_1px_0_0_rgba(255,255,255,0.05)_inset,0_0_0_1px_rgba(255,255,255,0.05)_inset,0_0_0_1px_rgba(0,0,0,0.3),0_4px_8px_0_rgba(0,0,0,0.3),0_8px_16px_0_rgba(0,0,0,0.3)]",
+          "bg-neutral-900/60 backdrop-blur-sm border border-neutral-700/50 hover:bg-neutral-800/70",
+          "shadow-[0_1px_0_0_rgba(255,255,255,0.02)_inset,0_0_0_1px_rgba(255,255,255,0.02)_inset,0_0_0_1px_rgba(0,0,0,0.3),0_2px_4px_0_rgba(0,0,0,0.4),0_4px_8px_0_rgba(0,0,0,0.2)]",
+          "hover:shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(0,0,0,0.4),0_4px_8px_0_rgba(0,0,0,0.5),0_8px_16px_0_rgba(0,0,0,0.3)]",
         ],
         className
       )}
@@ -84,7 +84,7 @@ const MinimalCardImage = React.forwardRef<
       className={cn(
         "absolute inset-0 rounded-[16px] transition-opacity duration-300",
         !isDark && "bg-black/5 hover:bg-black/10",
-        isDark && "bg-black/20 hover:bg-black/10"
+        isDark && "bg-black/30 hover:bg-black/20"
       )}
     />
 
@@ -111,7 +111,7 @@ const MinimalCardTitle = React.forwardRef<
     className={cn(
       "mt-2 px-1 text-lg font-semibold leading-tight transition-colors duration-300",
       !isDark && "text-gray-900",
-      isDark && "text-white",
+      isDark && "text-neutral-100",
       className
     )}
     {...props}
@@ -128,7 +128,7 @@ const MinimalCardDescription = React.forwardRef<
     className={cn(
       "px-1 pb-2 text-sm transition-colors duration-300 leading-relaxed",
       !isDark && "text-gray-600",
-      isDark && "text-gray-300",
+      isDark && "text-neutral-300",
       className
     )}
     {...props}

@@ -14,12 +14,11 @@ import {
   Link as LinkIcon,
 } from "lucide-react";
 import SplitText from "@/components/ui/split-text";
-import { ExpandedTabs } from "@/components/ui/expanded-tabs";
 import SlideButton from "@/components/ui/slide-button";
-import { Spotlight } from "@/components/ui/spotlight";
 import { cn } from "@/lib/utils";
 import { DarkModeContext } from "@/app/layout";
-
+import { Spotlight } from "@/components/ui/spotlight";
+import { useRouter } from "next/navigation";
 const tabs = [
   { title: "Dashboard", icon: Home },
   { title: "Notifications", icon: Bell },
@@ -30,8 +29,8 @@ const tabs = [
 ];
 
 export default function HomePage() {
-  const { isDark, toggleDark } = useContext(DarkModeContext); // ✅ Use context
-
+  const { isDark, toggleDark } = useContext(DarkModeContext);
+  const router = useRouter();
   const [showCards, setShowCards] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionOrigin, setTransitionOrigin] = useState({ x: 0, y: 0 });
@@ -84,12 +83,13 @@ export default function HomePage() {
   return (
     <div
       className={cn(
-        "min-h-screen relative overflow-hidden",
+        "min-h-screen relative bg-transparent overflow-hidden",
         isDark
           ? "bg-black text-white"
-          : "bg-gradient-to-br from-slate-50 to-blue-50 text-gray-900"
+          : "bg-gradient-to-br from-slate-200 to-blue-100 text-gray-900"
       )}
     >
+      <Spotlight isDark={isDark} />
       <AnimatePresence>
         {isTransitioning && (
           <motion.div
@@ -120,8 +120,6 @@ export default function HomePage() {
           />
         )}
       </AnimatePresence>
-
-      <Spotlight isDark={isDark} />
 
       {/* Top-right controls */}
 
@@ -331,15 +329,9 @@ export default function HomePage() {
             Slide to see all my projects
           </motion.p>
           <SlideButton
-            className={cn(
-              "transition-all duration-300 pt-0"
-              // isDark
-              //   ? "bg-white/10 hover:bg-white/20 text-white"
-              //   : "bg-gray-900 hover:bg-gray-800 text-white"
-            )}
-            onClick={() => {
-              // Handle navigation to projects page
-              console.log("Navigate to projects");
+            className="transition-all duration-300 pt-0"
+            onSlideComplete={() => {
+              router.push("/projects");
             }}
           />
         </motion.div>

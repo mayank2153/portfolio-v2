@@ -7,9 +7,9 @@ import {
   Github,
   Eye,
   ArrowRight,
-  Code,
-  Database,
-  Zap,
+  Repeat,
+  Globe,
+  Users,
 } from "lucide-react";
 import { DarkModeContext } from "../layout";
 import { cn } from "@/lib/utils";
@@ -19,51 +19,56 @@ import {
   MinimalCardTitle,
   MinimalCardDescription,
   MinimalCardContent,
-  MinimalCardFooter,
 } from "@/components/ui/minimal-card";
-
+import { Spotlight } from "@/components/ui/spotlight";
 const Projects = () => {
   const { isDark } = useContext(DarkModeContext);
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
 
   const projects = [
     {
-      id: "ai-interviewer",
-      title: "AI-Powered Interviewer Platform",
+      id: "insocial",
+      title: "inSocial",
       description:
-        "A comprehensive platform that conducts AI-driven interviews using advanced natural language processing and machine learning algorithms.",
+        "A modern social networking platform that connects users through shared interests and vibrant communities.",
       longDescription:
-        "This platform revolutionizes the hiring process by leveraging cutting-edge AI to conduct intelligent, adaptive interviews that assess both technical skills and cultural fit.",
-      image: "/placeholder.svg?height=190&width=400",
-      technologies: ["React", "Node.js", "GCP", "Gemini AI", "TypeScript"],
-      stats: { users: "10K+", accuracy: "95%", interviews: "50K+" },
-      icon: Zap,
+        "inSocial empowers users to build and join communities, share updates in real time, and host virtual events—driving engagement with sleek UX and real‑time chat.",
+      image: "/insocial.png?height=190&width=400",
+      technologies: [
+        "Next.js",
+        "TypeScript",
+        "Tailwind CSS",
+        "Firebase",
+        "Socket.IO",
+      ],
+      stats: { users: "20K+", posts: "100K+", communities: "1K+" },
+      icon: Users,
       links: { github: "#", live: "#", demo: "#" },
     },
     {
-      id: "crm-system",
-      title: "Enterprise CRM System",
+      id: "campussync",
+      title: "CampusSync",
       description:
-        "A scalable customer relationship management system with robust APIs, real-time analytics, and comprehensive user management.",
+        "An integrated student management system synchronizing academic schedules, assignments, and communication.",
       longDescription:
-        "Built for enterprise-scale operations, this CRM system handles millions of customer interactions with real-time insights and predictive analytics.",
-      image: "/placeholder.svg?height=190&width=400",
-      technologies: ["React", "Node.js", "MongoDB", "Prisma", "Express"],
-      stats: { clients: "500+", uptime: "99.9%", records: "1M+" },
-      icon: Database,
+        "CampusSync streamlines campus life by unifying timetables, assignment tracking, and teacher‑student messaging into a single, mobile‑friendly portal.",
+      image: "/campussync.png?height=190&width=400",
+      technologies: ["React", "Node.js", "PostgreSQL", "Prisma", "GraphQL"],
+      stats: { students: "5K+", classes: "200+", messages: "500K+" },
+      icon: Repeat,
       links: { github: "#", live: "#", demo: "#" },
     },
     {
-      id: "notification-service",
-      title: "Centralized Notification Service",
+      id: "w-monitor",
+      title: "W‑Monitor",
       description:
-        "A unified notification system supporting multiple channels including email, SMS, push notifications, and in-app messaging.",
+        "A real-time monitoring dashboard for servers and web applications, ensuring performance and uptime.",
       longDescription:
-        "This microservice architecture handles millions of notifications daily across multiple channels with intelligent routing and delivery optimization.",
-      image: "/placeholder.svg?height=190&width=400",
-      technologies: ["Node.js", "Redis", "WebSocket", "MongoDB", "React"],
-      stats: { messages: "1M+/day", channels: "8", latency: "<100ms" },
-      icon: Code,
+        "W‑Monitor offers live metrics, customizable alerts, and deep analytics—giving ops teams the insights they need to keep services running at peak performance.",
+      image: "/w-monitor.png?height=190&width=400",
+      technologies: ["Vue.js", "Django", "Redis", "Prometheus", "Grafana"],
+      stats: { metrics: "500+", alerts: "10K+", uptime: "99.99%" },
+      icon: Globe,
       links: { github: "#", live: "#", demo: "#" },
     },
   ];
@@ -72,9 +77,12 @@ const Projects = () => {
     <div
       className={cn(
         "min-h-screen relative overflow-hidden transition-colors duration-300",
-        isDark ? "bg-black text-white" : "bg-white text-gray-900"
+        isDark
+          ? "bg-black text-white"
+          : "bg-gradient-to-br from-slate-200 to-blue-100 text-gray-900"
       )}
     >
+      <Spotlight isDark={isDark} />
       {/* Background Gradient */}
       <div
         className={cn(

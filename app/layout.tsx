@@ -124,17 +124,18 @@ export default function RootLayout({
       href: "/experience",
       type: "navigation" as const,
     },
-    {
-      type: "separator" as const,
-    },
+    // {
+    //   type: "separator" as const,
+    // },
     {
       title: "Email",
       icon: Mail,
       onClick: () => {
         navigator.clipboard.writeText("your.email@example.com");
-        alert("Email copied to clipboard!");
       },
       type: "action" as const,
+      successText: "Copied!",
+      successDuration: 2000,
     },
     {
       title: "Resume",
