@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, createContext, useContext } from "react";
+import { useState, useRef, useEffect, createContext } from "react";
 import { Playfair_Display, Inter } from "next/font/google";
 import { Spotlight } from "@/components/ui/spotlight";
 import { Moon, Sun } from "lucide-react";
@@ -9,17 +9,20 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 import ShareButton from "@/components/ui/share-button";
 import { Twitter, Facebook, Linkedin, Link as LinkIcon } from "lucide-react";
-import { ExpandedTabs } from "@/components/ui/expanded-tabs";
-import { Home, Bell, Settings, HelpCircle, Shield } from "lucide-react";
+import { NavigationDock } from "@/components/ui/expanded-tabs";
+import { Home, Briefcase, User, Mail, Download, Calendar } from "lucide-react";
 
-const globalTabs = [
-  { title: "Dashboard", icon: Home },
-  { title: "Notifications", icon: Bell },
-  { type: "separator" as const },
-  { title: "Settings", icon: Settings },
-  { title: "Support", icon: HelpCircle },
-  { title: "Security", icon: Shield },
-];
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-playfair",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 const shareLinks = [
   {
@@ -39,7 +42,10 @@ const shareLinks = [
   },
   {
     icon: LinkIcon,
-    onClick: () => navigator.clipboard.writeText(window.location.href),
+    onClick: () => {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Link copied to clipboard!");
+    },
     label: "Copy link",
   },
 ];
@@ -65,7 +71,12 @@ export default function RootLayout({
   const themeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    setHasHydrated(true); // delay transition logic until hydration completes
+    setHasHydrated(true);
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      setIsDark(savedTheme === "dark");
+    }
   }, []);
 
   const toggleDark = () => {
@@ -77,7 +88,6 @@ export default function RootLayout({
       });
     }
 
-    // Only read window sizes on the client
     const radius =
       typeof window !== "undefined"
         ? Math.max(window.innerWidth, window.innerHeight) * 1.5
@@ -86,34 +96,89 @@ export default function RootLayout({
     setClipRadius(radius);
     setIsTransitioning(true);
 
-    setTimeout(() => setIsDark((prev) => !prev), 300);
+    setTimeout(() => {
+      const newTheme = !isDark;
+      setIsDark(newTheme);
+      localStorage.setItem("theme", newTheme ? "dark" : "light");
+    }, 300);
     setTimeout(() => setIsTransitioning(false), 800);
   };
 
+  // Portfolio tabs with proper navigation
+  const portfolioTabs = [
+    {
+      title: "Home",
+      icon: Home,
+      href: "/",
+      type: "navigation" as const,
+    },
+    {
+      title: "Projects",
+      icon: Briefcase,
+      href: "/projects",
+      type: "navigation" as const,
+    },
+    {
+      title: "Experience",
+      icon: User,
+      href: "/experience",
+      type: "navigation" as const,
+    },
+    {
+      type: "separator" as const,
+    },
+    {
+      title: "Email",
+      icon: Mail,
+      onClick: () => {
+        navigator.clipboard.writeText("your.email@example.com");
+        alert("Email copied to clipboard!");
+      },
+      type: "action" as const,
+    },
+    {
+      title: "Resume",
+      icon: Download,
+      onClick: () => window.open("/your-resume.pdf", "_blank"),
+      type: "action" as const,
+    },
+    {
+      title: "Meeting",
+      icon: Calendar,
+      onClick: () =>
+        window.open("https://cal.com/mayank-sachdeva/15min", "_blank"),
+      type: "action" as const,
+    },
+  ];
+
   return (
-    <html lang="en">
+    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body
         className={cn(
-          `font-serif antialiased transition-colors duration-300`,
-          isDark ? "bg-black text-white" : " text-gray-900"
+          "font-serif antialiased min-h-screen transition-colors duration-300",
+          isDark
+            ? "bg-black text-white"
+            : "bg-gradient-to-br from-slate-50 to-blue-50 text-gray-900"
         )}
-        style={{ fontFamily: "Playfair Display, serif" }}
+        style={{ fontFamily: "var(--font-playfair), serif" }}
       >
         <DarkModeContext.Provider value={{ isDark, toggleDark }}>
           <Spotlight isDark={isDark} />
 
-          {/* Top-right controls - ShareButton and Theme Toggle side by side */}
+          {/* Top-right controls */}
           <div className="fixed top-4 sm:top-6 right-4 sm:right-6 z-50 flex items-center space-x-2 sm:space-x-3">
             <ShareButton className="" links={shareLinks} />
 
-            <button
+            <motion.button
               ref={themeButtonRef}
               onClick={toggleDark}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               className={cn(
-                "p-2 rounded-full cursor-pointer transition-all duration-300 relative overflow-hidden",
+                "p-2.5 rounded-full cursor-pointer transition-all duration-300 relative overflow-hidden backdrop-blur-sm",
                 isDark
-                  ? "bg-white/10 hover:bg-white/20 text-white shadow-lg"
-                  : "bg-white/80 hover:bg-white text-gray-700 shadow-lg backdrop-blur-sm border border-white/20"
+                  ? "bg-white/10 hover:bg-white/20 text-white shadow-xl border border-white/10"
+                  : "bg-white/80 hover:bg-white text-gray-700 shadow-xl border border-white/20"
               )}
             >
               <AnimatePresence mode="wait">
@@ -139,9 +204,10 @@ export default function RootLayout({
                   </motion.div>
                 )}
               </AnimatePresence>
-            </button>
+            </motion.button>
           </div>
 
+          {/* Theme transition overlay */}
           <AnimatePresence>
             {hasHydrated && isTransitioning && (
               <motion.div
@@ -171,9 +237,12 @@ export default function RootLayout({
             )}
           </AnimatePresence>
 
+          {/* Main content */}
           {children}
+
+          {/* Bottom navigation */}
           <div className="fixed z-20 bottom-12 sm:bottom-28 left-1/2 transform -translate-x-1/2 flex items-center px-4 sm:px-0">
-            <ExpandedTabs tabs={globalTabs} isDark={isDark} />
+            <NavigationDock tabs={portfolioTabs} isDark={isDark} />
           </div>
         </DarkModeContext.Provider>
       </body>

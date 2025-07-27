@@ -3,7 +3,6 @@
 import { useContext } from "react";
 import { motion } from "framer-motion";
 import { Timeline } from "@/components/ui/timeline";
-import { ExpandedTabs } from "@/components/ui/expanded-tabs";
 import { DarkModeContext } from "@/app/layout";
 import { cn } from "@/lib/utils";
 import { Home, Bell, Settings, HelpCircle, Shield } from "lucide-react";
@@ -62,11 +61,6 @@ const Experience = () => {
         >
           <Timeline data={useExperienceData()} />
         </motion.div>
-      </div>
-
-      {/* Fixed Tabs */}
-      <div className="fixed z-20 bottom-12 sm:bottom-28 left-1/2 transform -translate-x-1/2 flex items-center px-4 sm:px-0">
-        <ExpandedTabs tabs={tabs} isDark={isDark} />
       </div>
     </div>
   );

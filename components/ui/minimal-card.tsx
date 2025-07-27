@@ -1,39 +1,72 @@
-import * as React from "react"
-import Image from "next/image"
+import * as React from "react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
+interface MinimalCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  children?: React.ReactNode;
+  isDark?: boolean;
+}
 
-const MinimalCard = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }
->(({ className, children, ...props }, ref) => (
-  <div
-    ref={ref}
-    // eslint-disable-next-line tailwindcss/no-contradicting-classname
-    className={cn(
-      "rounded-[24px] bg-neutral-50 p-2 no-underline shadow-sm transition-colors hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-800/80 ",
-      "shadow-[0px_1px_1px_0px_rgba(0,0,0,0.05),0px_1px_1px_0px_rgba(255,252,240,0.5)_inset,0px_0px_0px_1px_hsla(0,0%,100%,0.1)_inset,0px_0px_1px_0px_rgba(28,27,26,0.5)]",
-      "shadow-[rgba(17,24,28,0.08)_0_0_0_1px,rgba(17,24,28,0.08)_0_1px_2px_-1px,rgba(17,24,28,0.04)_0_2px_4px]",
-      "dark:shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(0,0,0,0.1),0_2px_2px_0_rgba(0,0,0,0.1),0_4px_4px_0_rgba(0,0,0,0.1),0_8px_8px_0_rgba(0,0,0,0.1)]",
-      className
-    )}
-    {...props}
-  >
-    {children}
-  </div>
-))
-MinimalCard.displayName = "MinimalCard"
+interface MinimalCardImageProps extends React.HTMLAttributes<HTMLDivElement> {
+  src: string;
+  alt: string;
+  isDark?: boolean;
+}
+
+interface MinimalCardComponentProps
+  extends React.HTMLAttributes<
+    HTMLHeadingElement | HTMLParagraphElement | HTMLDivElement
+  > {
+  isDark?: boolean;
+}
+
+const MinimalCard = React.forwardRef<HTMLDivElement, MinimalCardProps>(
+  ({ className, children, isDark = false, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        "rounded-[24px] p-2 no-underline transition-all duration-300",
+        // Light mode styles
+        !isDark && [
+          "bg-white shadow-sm hover:shadow-md",
+          "shadow-[rgba(17,24,28,0.08)_0_0_0_1px,rgba(17,24,28,0.08)_0_1px_2px_-1px,rgba(17,24,28,0.04)_0_2px_4px]",
+          "hover:shadow-[rgba(17,24,28,0.12)_0_0_0_1px,rgba(17,24,28,0.12)_0_2px_4px_-1px,rgba(17,24,28,0.08)_0_4px_8px]",
+          "border border-gray-100",
+        ],
+        // Dark mode styles
+        isDark && [
+          "bg-gray-900/50 backdrop-blur-sm border border-gray-800 hover:bg-gray-800/60",
+          "shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(0,0,0,0.2),0_2px_4px_0_rgba(0,0,0,0.2),0_4px_8px_0_rgba(0,0,0,0.2)]",
+          "hover:shadow-[0_1px_0_0_rgba(255,255,255,0.05)_inset,0_0_0_1px_rgba(255,255,255,0.05)_inset,0_0_0_1px_rgba(0,0,0,0.3),0_4px_8px_0_rgba(0,0,0,0.3),0_8px_16px_0_rgba(0,0,0,0.3)]",
+        ],
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+);
+MinimalCard.displayName = "MinimalCard";
 
 const MinimalCardImage = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { src: string; alt: string }
->(({ className, alt, src, ...props }, ref) => (
+  MinimalCardImageProps
+>(({ className, alt, src, isDark = false, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "relative mb-6 h-[190px] w-full rounded-[20px]",
-      "shadow-[0px_1px_1px_0px_rgba(0,0,0,0.05),0px_1px_1px_0px_rgba(255,252,240,0.5)_inset,0px_0px_0px_1px_hsla(0,0%,100%,0.1)_inset,0px_0px_1px_0px_rgba(28,27,26,0.5)]",
-      "dark:shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(0,0,0,0.1),0_2px_2px_0_rgba(0,0,0,0.1),0_4px_4px_0_rgba(0,0,0,0.1),0_8px_8px_0_rgba(0,0,0,0.1)]",
+      "relative mb-6 h-[190px] w-full rounded-[20px] overflow-hidden",
+      // Light mode styles
+      !isDark && [
+        "shadow-[rgba(17,24,28,0.08)_0_0_0_1px,rgba(17,24,28,0.04)_0_1px_2px_-1px,rgba(17,24,28,0.02)_0_2px_4px]",
+        "bg-gray-50",
+      ],
+      // Dark mode styles
+      isDark && [
+        "shadow-[0_0_0_1px_rgba(255,255,255,0.05)_inset,0_0_0_1px_rgba(0,0,0,0.2),0_2px_4px_0_rgba(0,0,0,0.2)]",
+        "bg-gray-800/30",
+      ],
       className
     )}
     {...props}
@@ -41,72 +74,94 @@ const MinimalCardImage = React.forwardRef<
     <Image
       src={src}
       alt={alt}
-      width={200}
-      height={200}
-      className="absolute inset-0 size-full rounded-[16px] object-cover "
+      width={400}
+      height={190}
+      className="absolute inset-0 size-full rounded-[16px] object-cover transition-transform duration-300 hover:scale-105"
     />
-    <div className="absolute inset-0 rounded-[16px]">
-      <div
-        className={cn(
-          "absolute inset-0 rounded-[16px]",
-          "shadow-[0px_0px_0px_1px_rgba(0,0,0,.07),0px_0px_0px_3px_#fff,0px_0px_0px_4px_rgba(0,0,0,.08)]",
-          "dark:shadow-[0px_0px_0px_1px_rgba(0,0,0,.07),0px_0px_0px_3px_rgba(100,100,100,0.3),0px_0px_0px_4px_rgba(0,0,0,.08)]"
-        )}
-      />
-      <div
-        className={cn(
-          "absolute inset-0 rounded-[16px]",
-          "dark:shadow-[0px_1px_1px_0px_rgba(0,0,0,0.15),0px_1px_1px_0px_rgba(0,0,0,0.15)_inset,0px_0px_0px_1px_rgba(0,0,0,0.15)_inset,0px_0px_1px_0px_rgba(0,0,0,0.15)]"
-        )}
-      />
-    </div>
+
+    {/* Image overlay for better contrast */}
+    <div
+      className={cn(
+        "absolute inset-0 rounded-[16px] transition-opacity duration-300",
+        !isDark && "bg-black/5 hover:bg-black/10",
+        isDark && "bg-black/20 hover:bg-black/10"
+      )}
+    />
+
+    {/* Inner shadow for depth */}
+    <div
+      className={cn(
+        "absolute inset-0 rounded-[16px] pointer-events-none",
+        !isDark &&
+          "shadow-[inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(0,0,0,0.05)]",
+        isDark &&
+          "shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_2px_rgba(0,0,0,0.3)]"
+      )}
+    />
   </div>
-))
-MinimalCardImage.displayName = "MinimalCardImage"
+));
+MinimalCardImage.displayName = "MinimalCardImage";
 
 const MinimalCardTitle = React.forwardRef<
   HTMLHeadingElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
+  MinimalCardComponentProps
+>(({ className, isDark = false, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn("mt-2 px-1 text-lg font-semibold leading-tight", className)}
+    className={cn(
+      "mt-2 px-1 text-lg font-semibold leading-tight transition-colors duration-300",
+      !isDark && "text-gray-900",
+      isDark && "text-white",
+      className
+    )}
     {...props}
   />
-))
-MinimalCardTitle.displayName = "MinimalCardTitle"
+));
+MinimalCardTitle.displayName = "MinimalCardTitle";
 
 const MinimalCardDescription = React.forwardRef<
   HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
+  MinimalCardComponentProps
+>(({ className, isDark = false, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("px-1 pb-2 text-sm text-neutral-500", className)}
+    className={cn(
+      "px-1 pb-2 text-sm transition-colors duration-300 leading-relaxed",
+      !isDark && "text-gray-600",
+      isDark && "text-gray-300",
+      className
+    )}
     {...props}
   />
-))
-MinimalCardDescription.displayName = "MinimalCardDescription"
+));
+MinimalCardDescription.displayName = "MinimalCardDescription";
 
 const MinimalCardContent = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-))
-MinimalCardContent.displayName = "MinimalCardContent"
+  MinimalCardComponentProps
+>(({ className, isDark = false, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("p-6 pt-0 transition-colors duration-300", className)}
+    {...props}
+  />
+));
+MinimalCardContent.displayName = "MinimalCardContent";
 
 const MinimalCardFooter = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+  MinimalCardComponentProps
+>(({ className, isDark = false, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
+    className={cn(
+      "flex items-center p-6 pt-0 transition-colors duration-300",
+      className
+    )}
     {...props}
   />
-))
-MinimalCardFooter.displayName = "MinimalCardFooter"
+));
+MinimalCardFooter.displayName = "MinimalCardFooter";
 
 export {
   MinimalCard,
@@ -115,6 +170,6 @@ export {
   MinimalCardDescription,
   MinimalCardContent,
   MinimalCardFooter,
-}
+};
 
-export default MinimalCard
+export default MinimalCard;

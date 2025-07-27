@@ -69,9 +69,24 @@ const Projects = () => {
   ];
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div
+      className={cn(
+        "min-h-screen relative overflow-hidden transition-colors duration-300",
+        isDark ? "bg-black text-white" : "bg-white text-gray-900"
+      )}
+    >
+      {/* Background Gradient */}
+      <div
+        className={cn(
+          "absolute inset-0 opacity-50 transition-opacity duration-300",
+          isDark
+            ? "bg-gradient-to-br from-purple-900/20 via-transparent to-blue-900/20"
+            : "bg-gradient-to-br from-purple-50 via-transparent to-blue-50"
+        )}
+      />
+
       {/* Header */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -130,12 +145,16 @@ const Projects = () => {
                   onHoverEnd={() => setHoveredProject(null)}
                   className="group"
                 >
-                  <MinimalCard className="h-full transition-all duration-300 hover:shadow-2xl">
+                  <MinimalCard
+                    isDark={isDark}
+                    className="h-full transition-all duration-300 hover:shadow-2xl"
+                  >
                     {/* Project Image with Overlay */}
                     <div className="relative">
                       <MinimalCardImage
                         src={project.image}
                         alt={project.title}
+                        isDark={isDark}
                       />
 
                       {/* Icon Badge */}
@@ -147,10 +166,10 @@ const Projects = () => {
                       >
                         <div
                           className={cn(
-                            "p-2 rounded-full backdrop-blur-sm border",
+                            "p-2 rounded-full backdrop-blur-sm border transition-colors duration-300",
                             isDark
-                              ? "bg-black/50 border-white/20 text-white"
-                              : "bg-white/80 border-gray-200 text-gray-700"
+                              ? "bg-black/60 border-white/20 text-white"
+                              : "bg-white/90 border-gray-200 text-gray-700"
                           )}
                         >
                           <Icon className="w-4 h-4" />
@@ -235,10 +254,8 @@ const Projects = () => {
                         transition={{ duration: 0.6, delay: index * 0.2 + 0.4 }}
                       >
                         <MinimalCardTitle
-                          className={cn(
-                            "font-serif text-xl mb-3",
-                            isDark ? "text-white" : "text-gray-900"
-                          )}
+                          isDark={isDark}
+                          className="font-serif text-xl mb-3"
                         >
                           {project.title}
                         </MinimalCardTitle>
@@ -251,10 +268,8 @@ const Projects = () => {
                         transition={{ duration: 0.6, delay: index * 0.2 + 0.5 }}
                       >
                         <MinimalCardDescription
-                          className={cn(
-                            "mb-4 leading-relaxed",
-                            isDark ? "text-gray-300" : "text-gray-600"
-                          )}
+                          isDark={isDark}
+                          className="mb-4 leading-relaxed"
                         >
                           {project.description}
                         </MinimalCardDescription>
@@ -277,9 +292,9 @@ const Projects = () => {
                               delay: index * 0.2 + 0.7 + techIndex * 0.05,
                             }}
                             className={cn(
-                              "px-3 py-1 rounded-full text-xs font-medium transition-all duration-200",
+                              "px-3 py-1 rounded-full text-xs font-medium transition-all duration-300",
                               isDark
-                                ? "bg-neutral-700/50 text-gray-300 border border-neutral-600 hover:bg-neutral-600/50"
+                                ? "bg-gray-800/60 text-gray-300 border border-gray-700 hover:bg-gray-700/60"
                                 : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
                             )}
                           >
