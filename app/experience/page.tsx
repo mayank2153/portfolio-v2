@@ -52,7 +52,7 @@ const Experience = () => {
               isDark ? "text-gray-400" : "text-gray-600"
             )}
           >
-            My professional journey and the impact I've made along the way.
+            My professional journey and the impact I&apos;ve made along the way.
           </p>
         </motion.div>
 

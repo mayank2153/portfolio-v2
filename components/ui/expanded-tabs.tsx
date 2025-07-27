@@ -118,6 +118,8 @@ export function NavigationDock({
     />
   ));
 
+  SeparatorComponent.displayName = "SeparatorComponent";
+
   return (
     <motion.nav
       initial={{ opacity: 0, y: 20 }}
