@@ -9,6 +9,17 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 import ShareButton from "@/components/ui/share-button";
 import { Twitter, Facebook, Linkedin, Link as LinkIcon } from "lucide-react";
+import { ExpandedTabs } from "@/components/ui/expanded-tabs";
+import { Home, Bell, Settings, HelpCircle, Shield } from "lucide-react";
+
+const globalTabs = [
+  { title: "Dashboard", icon: Home },
+  { title: "Notifications", icon: Bell },
+  { type: "separator" as const },
+  { title: "Settings", icon: Settings },
+  { title: "Support", icon: HelpCircle },
+  { title: "Security", icon: Shield },
+];
 
 const shareLinks = [
   {
@@ -84,7 +95,7 @@ export default function RootLayout({
       <body
         className={cn(
           `font-serif antialiased transition-colors duration-300`,
-          isDark ? "bg-black text-white" : "bg-slate-50 text-gray-900"
+          isDark ? "bg-black text-white" : " text-gray-900"
         )}
         style={{ fontFamily: "Playfair Display, serif" }}
       >
@@ -161,6 +172,9 @@ export default function RootLayout({
           </AnimatePresence>
 
           {children}
+          <div className="fixed z-20 bottom-12 sm:bottom-28 left-1/2 transform -translate-x-1/2 flex items-center px-4 sm:px-0">
+            <ExpandedTabs tabs={globalTabs} isDark={isDark} />
+          </div>
         </DarkModeContext.Provider>
       </body>
     </html>

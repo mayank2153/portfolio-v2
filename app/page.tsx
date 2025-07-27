@@ -203,11 +203,6 @@ export default function HomePage() {
           </motion.div>
         </div>
 
-        {/* Tabs */}
-        <div className="fixed z-20 bottom-12 sm:bottom-28 left-1/2 transform -translate-x-1/2 flex items-center px-4 sm:px-0">
-          <ExpandedTabs tabs={tabs} isDark={isDark} />
-        </div>
-
         {/* Animated cards */}
         <div
           className="flex justify-center items-center min-h-[250px] sm:min-h-[300px] px-4"

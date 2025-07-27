@@ -1,4 +1,3 @@
-// components/ui/spotlight.tsx
 "use client";
 
 import React from "react";
