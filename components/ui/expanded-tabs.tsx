@@ -65,9 +65,11 @@ export function NavigationDock({
   const router = useRouter();
   const pathname = usePathname();
   const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
+  const [expandedIndex, setExpandedIndex] = React.useState<number | null>(null);
   const [changedTextTabs, setChangedTextTabs] = React.useState<
     Map<number, string>
   >(new Map());
+  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Get active tab index based on current pathname
   const activeIndex = React.useMemo(() => {
@@ -76,6 +78,40 @@ export function NavigationDock({
     );
     return index !== -1 ? index : null;
   }, [pathname, tabs]);
+
+  const handleMouseEnter = React.useCallback((index: number) => {
+    setHoveredIndex(index);
+
+    // Clear any existing timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+
+    // Set a new timeout to expand the tab after 500ms
+    hoverTimeoutRef.current = setTimeout(() => {
+      setExpandedIndex(index);
+    }, 500);
+  }, []);
+
+  const handleMouseLeave = React.useCallback(() => {
+    setHoveredIndex(null);
+    setExpandedIndex(null);
+
+    // Clear the timeout if mouse leaves before 500ms
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+  }, []);
+
+  // Cleanup timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleTabClick = React.useCallback(
     (tab: TabItem, index: number) => {
@@ -145,16 +181,18 @@ export function NavigationDock({
 
         const Icon = tab.icon;
         const isHovered = hoveredIndex === index;
+        const isExpanded = expandedIndex === index;
         const isActive = activeIndex === index;
         const changedText = changedTextTabs.get(index);
         const displayText = changedText || tab.title;
         const hasTextChanged = Boolean(changedText);
+        const shouldShowText = isExpanded || hasTextChanged;
 
         return (
           <motion.button
             key={`${tab.type}-${tab.title}-${index}`}
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
+            onMouseEnter={() => handleMouseEnter(index)}
+            onMouseLeave={handleMouseLeave}
             onClick={() => handleTabClick(tab, index)}
             className={cn(
               "relative flex items-center justify-center rounded-xl overflow-hidden",
@@ -198,7 +236,7 @@ export function NavigationDock({
             <motion.div
               className="flex items-center relative z-10 px-3 py-2.5"
               animate={{
-                width: isHovered || hasTextChanged ? "auto" : "2.75rem",
+                width: shouldShowText ? "auto" : "2.75rem",
               }}
               transition={HOVER_ANIMATION_CONFIG}
             >
@@ -234,7 +272,7 @@ export function NavigationDock({
 
               {/* Text label with smooth text change animation */}
               <AnimatePresence mode="wait">
-                {(isHovered || hasTextChanged) && (
+                {shouldShowText && (
                   <motion.div
                     initial={{
                       opacity: 0,
