@@ -11,7 +11,7 @@ import ShareButton from "@/components/ui/share-button";
 import { Twitter, Facebook, Linkedin, Link as LinkIcon } from "lucide-react";
 import { NavigationDock } from "@/components/ui/expanded-tabs";
 import { Home, Briefcase, User, Mail, Download, Calendar } from "lucide-react";
-
+import { Analytics } from "@vercel/analytics/next";
 const playfair = Playfair_Display({
   subsets: ["latin"],
   display: "swap",
