@@ -36,7 +36,7 @@ const Projects = () => {
       image: "/wmonitor.jpeg?height=190&width=400",
       technologies: [
         "React",
-        "Next.js",
+        "Express.js",
         "TypeScript",
         "Tailwind CSS",
         "Amazon SQS",
