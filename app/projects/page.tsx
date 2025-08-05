@@ -56,7 +56,7 @@ const Projects = () => {
         "Anonymous social media app for secure posting and private chat with real-time updates.",
       longDescription:
         "inSocial is a minimalist, anonymous-first social platform built for open expression. Features include secure posting, real-time private messaging using WebSockets, and category-based content discovery. Built with a responsive UI using React and Tailwind CSS.",
-      image: "/insocial.png?height=190&width=400",
+      image: "/inSocial.png?height=190&width=400",
       technologies: [
         "React.js",
         "Node.js",
