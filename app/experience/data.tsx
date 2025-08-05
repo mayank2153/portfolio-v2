@@ -1,8 +1,17 @@
-import { MapPin, Calendar, Code, Database, Cloud, Users } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  Code,
+  Database,
+  Cloud,
+  Users,
+  Layers,
+} from "lucide-react";
 import { motion } from "motion/react";
 import { useContext } from "react";
 import { DarkModeContext } from "@/app/layout";
 import { cn } from "@/lib/utils";
+
 export const useExperienceData = () => {
   const { isDark } = useContext(DarkModeContext);
 
@@ -40,7 +49,7 @@ export const useExperienceData = () => {
                     isDark ? "text-white" : "text-gray-900"
                   )}
                 >
-                  Full Stack Engineer at{" "}
+                  Founding Engineer at{" "}
                   <motion.span
                     className="relative inline-block group cursor-pointer"
                     whileHover={{ scale: 1.02 }}
@@ -102,11 +111,10 @@ export const useExperienceData = () => {
                 isDark ? "text-gray-300" : "text-gray-600"
               )}
             >
-              Led the development of critical backend systems and frontend
-              components, including a comprehensive CRM, Report Service, AI -
-              powered Interviewer platform, unified authentication service,
-              plugins, recommendation algorithms, and a centralized notification
-              service.
+              Leading end-to-end development of critical backend systems and
+              frontend components, including comprehensive CRM solutions,
+              AI-powered platforms, and unified authentication services for
+              multi-tenant operations.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -150,7 +158,8 @@ export const useExperienceData = () => {
                         isDark ? "bg-emerald-400" : "bg-emerald-500"
                       )}
                     />
-                    Built scalable CRM backend with robust APIs
+                    Led CRM Development: Managed end-to-end development of
+                    scalable CRM to streamline consultant workflows
                   </li>
                   <li className="flex items-start gap-2">
                     <div
@@ -159,8 +168,8 @@ export const useExperienceData = () => {
                         isDark ? "bg-emerald-400" : "bg-emerald-500"
                       )}
                     />
-                    Developed AI Interviewer(frontend & backend) using GCP and
-                    Gemini models
+                    Delivered Report Engine: Architected editable student
+                    reports with in-browser editing and PDF export
                   </li>
                   <li className="flex items-start gap-2">
                     <div
@@ -169,7 +178,8 @@ export const useExperienceData = () => {
                         isDark ? "bg-emerald-400" : "bg-emerald-500"
                       )}
                     />
-                    Implemented unified authentication and notification systems
+                    Built AI Interviewer: Developed full-stack mock-interview
+                    platform using React, Cloud Tasks, Cloud Run & Gemini
                   </li>
                   <li className="flex items-start gap-2">
                     <div
@@ -178,7 +188,8 @@ export const useExperienceData = () => {
                         isDark ? "bg-emerald-400" : "bg-emerald-500"
                       )}
                     />
-                    Optimized recommendation algorithms for student profiles
+                    Established Unified Auth: Designed and deployed single
+                    sign-on microservice across subdomains
                   </li>
                 </ul>
               </motion.div>
@@ -214,9 +225,9 @@ export const useExperienceData = () => {
                   {[
                     "React",
                     "Node.js",
-                    "GCP",
-                    "Prisma",
-                    "MongoDB",
+                    "Cloud Tasks",
+                    "Cloud Run",
+                    "Gemini",
                     "TypeScript",
                   ].map((tech) => (
                     <span
@@ -239,7 +250,7 @@ export const useExperienceData = () => {
       ),
     },
     {
-      title: "Nov 2024 – Dec 2024",
+      title: "Nov 2024 – Jan 2025",
       content: (
         <div>
           <motion.div
@@ -271,12 +282,12 @@ export const useExperienceData = () => {
                     isDark ? "text-white" : "text-gray-900"
                   )}
                 >
-                  Software Engineer Intern at{" "}
+                  Engineer Intern at{" "}
                   <motion.span
                     className="relative inline-block group cursor-pointer"
                     whileHover={{ scale: 1.02 }}
                   >
-                    Whatbytes
+                    WhatBytes
                     <motion.div
                       className={cn(
                         "absolute bottom-0 left-0 h-0.5 bg-gradient-to-r",
@@ -304,7 +315,7 @@ export const useExperienceData = () => {
                         isDark ? "text-gray-400" : "text-gray-500"
                       )}
                     >
-                      Nov 2024 – Dec 2024
+                      Nov 2024 – Jan 2025
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
@@ -333,9 +344,9 @@ export const useExperienceData = () => {
                 isDark ? "text-gray-300" : "text-gray-600"
               )}
             >
-              Managed backend services using Node.js and handled frontend tasks
-              for a high - traffic application serving thousands of concurrent
-              users.
+              Developed high-performance frontend solutions and critical backend
+              features for a platform serving thousands of concurrent users,
+              focusing on optimization and real-time data synchronization.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -379,7 +390,8 @@ export const useExperienceData = () => {
                         isDark ? "bg-emerald-400" : "bg-emerald-500"
                       )}
                     />
-                    Enhanced backend performance and stability
+                    High-Traffic Frontend: Implemented React-based UI optimizing
+                    load times and responsiveness
                   </li>
                   <li className="flex items-start gap-2">
                     <div
@@ -388,7 +400,8 @@ export const useExperienceData = () => {
                         isDark ? "bg-emerald-400" : "bg-emerald-500"
                       )}
                     />
-                    Improved frontend responsiveness
+                    Developed Critical Features: Implemented core Next.js and
+                    Node.js functionalities
                   </li>
                   <li className="flex items-start gap-2">
                     <div
@@ -397,7 +410,7 @@ export const useExperienceData = () => {
                         isDark ? "bg-emerald-400" : "bg-emerald-500"
                       )}
                     />
-                    Managed high - concurrency application deployments
+                    Enhanced real-time data sync and performance optimization
                   </li>
                 </ul>
               </motion.div>
@@ -430,7 +443,7 @@ export const useExperienceData = () => {
                   </h5>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {["Node.js", "React", "Express", "JavaScript"].map((tech) => (
+                  {["React", "Next.js", "Node.js", "JavaScript"].map((tech) => (
                     <span
                       key={tech}
                       className={cn(
@@ -443,6 +456,222 @@ export const useExperienceData = () => {
                       {tech}
                     </span>
                   ))}
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      ),
+    },
+    {
+      title: "Mar 2024 – Jun 2024",
+      content: (
+        <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="space-y-6"
+          >
+            <div className="flex items-start gap-3">
+              <div
+                className={cn(
+                  "p-2 rounded-lg",
+                  isDark
+                    ? "bg-gradient-to-br from-green-500/20 to-teal-500/20"
+                    : "bg-gradient-to-br from-green-100 to-teal-100"
+                )}
+              >
+                <Layers
+                  className={cn(
+                    "h-5 w-5",
+                    isDark ? "text-green-400" : "text-green-600"
+                  )}
+                />
+              </div>
+              <div>
+                <h4
+                  className={cn(
+                    "text-lg font-semibold mb-2",
+                    isDark ? "text-white" : "text-gray-900"
+                  )}
+                >
+                  Frontend Developer Intern at{" "}
+                  <motion.span
+                    className="relative inline-block group cursor-pointer"
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    Antim Pravakta Media Pvt. Ltd.
+                    <motion.div
+                      className={cn(
+                        "absolute bottom-0 left-0 h-0.5 bg-gradient-to-r",
+                        isDark
+                          ? "from-green-400 to-teal-400"
+                          : "from-green-600 to-teal-600"
+                      )}
+                      initial={{ width: 0 }}
+                      whileHover={{ width: "100%" }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                    />
+                  </motion.span>
+                </h4>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center gap-1">
+                    <Calendar
+                      className={cn(
+                        "h-4 w-4",
+                        isDark ? "text-gray-400" : "text-gray-500"
+                      )}
+                    />
+                    <span
+                      className={cn(
+                        "text-sm",
+                        isDark ? "text-gray-400" : "text-gray-500"
+                      )}
+                    >
+                      Mar 2024 – Jun 2024
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MapPin
+                      className={cn(
+                        "h-4 w-4",
+                        isDark ? "text-gray-400" : "text-gray-500"
+                      )}
+                    />
+                    <span
+                      className={cn(
+                        "text-sm",
+                        isDark ? "text-gray-400" : "text-gray-500"
+                      )}
+                    >
+                      Remote
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p
+              className={cn(
+                "text-base leading-relaxed",
+                isDark ? "text-gray-300" : "text-gray-600"
+              )}
+            >
+              Focused on building reusable React components and integrating
+              frontend solutions with RESTful APIs to accelerate feature
+              delivery and enhance user experience.
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 1.0 }}
+                className={cn(
+                  "p-6 rounded-xl border transition-all duration-300 hover:shadow-lg",
+                  isDark
+                    ? "bg-white/5 border-white/10 hover:bg-white/10"
+                    : "bg-white/80 border-gray-200 hover:bg-white backdrop-blur-sm"
+                )}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Users
+                    className={cn(
+                      "h-5 w-5",
+                      isDark ? "text-emerald-400" : "text-emerald-600"
+                    )}
+                  />
+                  <h5
+                    className={cn(
+                      "font-semibold",
+                      isDark ? "text-white" : "text-gray-900"
+                    )}
+                  >
+                    Key Contributions
+                  </h5>
+                </div>
+                <ul
+                  className={cn(
+                    "space-y-2 text-sm",
+                    isDark ? "text-gray-300" : "text-gray-600"
+                  )}
+                >
+                  <li className="flex items-start gap-2">
+                    <div
+                      className={cn(
+                        "w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0",
+                        isDark ? "bg-emerald-400" : "bg-emerald-500"
+                      )}
+                    />
+                    UI Components: Developed reusable React components to
+                    accelerate feature delivery
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div
+                      className={cn(
+                        "w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0",
+                        isDark ? "bg-emerald-400" : "bg-emerald-500"
+                      )}
+                    />
+                    API Integration: Connected frontend to RESTful services for
+                    dynamic data rendering
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div
+                      className={cn(
+                        "w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0",
+                        isDark ? "bg-emerald-400" : "bg-emerald-500"
+                      )}
+                    />
+                    Enhanced user interface design and responsiveness
+                  </li>
+                </ul>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 1.1 }}
+                className={cn(
+                  "p-6 rounded-xl border transition-all duration-300 hover:shadow-lg",
+                  isDark
+                    ? "bg-white/5 border-white/10 hover:bg-white/10"
+                    : "bg-white/80 border-gray-200 hover:bg-white backdrop-blur-sm"
+                )}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Database
+                    className={cn(
+                      "h-5 w-5",
+                      isDark ? "text-purple-400" : "text-purple-600"
+                    )}
+                  />
+                  <h5
+                    className={cn(
+                      "font-semibold",
+                      isDark ? "text-white" : "text-gray-900"
+                    )}
+                  >
+                    Technologies
+                  </h5>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {["React", "JavaScript", "RESTful APIs", "CSS"].map(
+                    (tech) => (
+                      <span
+                        key={tech}
+                        className={cn(
+                          "px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 hover:scale-105",
+                          isDark
+                            ? "bg-gradient-to-r from-green-500/20 to-teal-500/20 text-green-300 border border-green-500/30"
+                            : "bg-gradient-to-r from-green-50 to-teal-50 text-green-700 border border-green-200"
+                        )}
+                      >
+                        {tech}
+                      </span>
+                    )
+                  )}
                 </div>
               </motion.div>
             </div>

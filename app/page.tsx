@@ -2,32 +2,16 @@
 
 import { useState, useEffect, useRef, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Moon,
-  Sun,
-  ExternalLink,
-  Home,
-  Bell,
-  Settings,
-  HelpCircle,
-  Shield,
-  Link as LinkIcon,
-} from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import SplitText from "@/components/ui/split-text";
 import SlideButton from "@/components/ui/slide-button";
 import { cn } from "@/lib/utils";
 import { DarkModeContext } from "@/app/layout";
 import { Spotlight } from "@/components/ui/spotlight";
 import { useRouter } from "next/navigation";
-const tabs = [
-  { title: "Dashboard", icon: Home },
-  { title: "Notifications", icon: Bell },
-  { type: "separator" as const },
-  { title: "Settings", icon: Settings },
-  { title: "Support", icon: HelpCircle },
-  { title: "Security", icon: Shield },
-];
-
+import wmonitor from "../public/wmonitor.jpeg";
+import inSocial from "../public/inSocial.png";
+import campussync from "../public/campussync.png";
 export default function HomePage() {
   const { isDark, toggleDark } = useContext(DarkModeContext);
   const router = useRouter();
@@ -41,42 +25,34 @@ export default function HomePage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleToggleTheme = () => {
-    if (themeButtonRef.current) {
-      const rect = themeButtonRef.current.getBoundingClientRect();
-      setTransitionOrigin({
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-      });
-    }
-
-    setIsTransitioning(true);
-
-    setTimeout(() => toggleDark(), 300);
-    setTimeout(() => setIsTransitioning(false), 800);
-  };
-
   const cardData = [
     {
-      id: "work",
-      title: "Work",
+      id: "insocial",
+      title: "inSocial",
       gradient: isDark
-        ? "from-pink-500 to-orange-400"
-        : "from-rose-400 to-pink-400",
+        ? "from-pink-500 to-purple-400"
+        : "from-pink-400 to-rose-400",
+      image: inSocial,
+      link: "/projects/insocial",
+    },
+
+    {
+      id: "wmonitor",
+      title: "W-Monitor",
+      gradient: isDark
+        ? "from-indigo-500 to-sky-400"
+        : "from-indigo-400 to-blue-400",
+      image: wmonitor,
+      link: "/projects/wmonitor",
     },
     {
-      id: "projects",
-      title: "Projects",
+      id: "campussync",
+      title: "CampusSync",
       gradient: isDark
-        ? "from-purple-500 to-pink-400"
-        : "from-violet-400 to-purple-400",
-    },
-    {
-      id: "experience",
-      title: "Experience",
-      gradient: isDark
-        ? "from-blue-500 to-purple-400"
-        : "from-blue-400 to-indigo-400",
+        ? "from-teal-500 to-blue-400"
+        : "from-teal-400 to-cyan-400",
+      image: campussync,
+      link: "/projects/campussync",
     },
   ];
 
@@ -113,17 +89,11 @@ export default function HomePage() {
             exit={{
               clipPath: `circle(0px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
             }}
-            transition={{
-              duration: 1.2,
-              ease: [0.25, 0.46, 0.45, 0.94],
-            }}
+            transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           />
         )}
       </AnimatePresence>
 
-      {/* Top-right controls */}
-
-      {/* Main content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20">
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
           <motion.h1
@@ -181,10 +151,23 @@ export default function HomePage() {
             transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
             className="flex flex-wrap justify-center gap-6 mb-20"
           >
-            {["Resume", "X", "Github", "LinkedIn"].map((link) => (
+            {[
+              {
+                label: "Resume",
+                href: "https://drive.google.com/file/d/1CRGWKtAnau8gQtPunT_iSK3BwGZh94ib/view?usp=sharing",
+              },
+              { label: "X", href: "https://x.com/mayankbytes" },
+              { label: "Github", href: "https://github.com/mayank2153" },
+              {
+                label: "LinkedIn",
+                href: "https://www.linkedin.com/in/mayank-sachdeva-559537224/",
+              },
+            ].map((item) => (
               <motion.a
-                key={link}
-                href="#"
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={cn(
@@ -194,49 +177,21 @@ export default function HomePage() {
                     : "text-gray-600 hover:text-gray-900 hover:bg-white/50 backdrop-blur-sm"
                 )}
               >
-                {link}
+                {item.label}
                 <ExternalLink className="h-4 w-4" />
               </motion.a>
             ))}
           </motion.div>
         </div>
 
-        {/* Animated cards */}
+        {/* Animated Cards */}
         <div
           className="flex justify-center items-center min-h-[250px] sm:min-h-[300px] px-4"
           style={{ perspective: 1000 }}
         >
           <div className="relative w-full max-w-6xl h-48 flex items-center justify-center">
             <AnimatePresence mode="wait">
-              {!showCards ? (
-                <motion.div
-                  key="single-card"
-                  initial={{ opacity: 0, scale: 0.9, y: 30 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{
-                    opacity: 0,
-                    scale: 1.1,
-                    transition: { duration: 0.4, ease: "easeInOut" },
-                  }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className={cn(
-                    "w-72 sm:w-80 h-44 sm:h-48 rounded-2xl relative overflow-hidden",
-                    isDark ? "shadow-xl" : "shadow-2xl shadow-blue-200/50"
-                  )}
-                  style={{
-                    background: isDark
-                      ? "linear-gradient(135deg, #ff6b9d 0%, #ffa07a 100%)"
-                      : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                  }}
-                >
-                  <div className="absolute inset-0 bg-black/10 backdrop-blur-sm rounded-2xl" />
-                  <div className="relative z-10 p-4 sm:p-6 h-full flex items-center justify-center">
-                    <h3 className="text-white text-lg sm:text-xl font-semibold">
-                      Portfolio Preview
-                    </h3>
-                  </div>
-                </motion.div>
-              ) : (
+              {showCards && (
                 <motion.div
                   key="three-cards"
                   className="absolute inset-0 flex justify-center items-center"
@@ -257,14 +212,7 @@ export default function HomePage() {
                           isDark ? "shadow-xl" : "shadow-2xl shadow-blue-200/30"
                         )}
                         style={{ transformStyle: "preserve-3d" }}
-                        initial={{
-                          opacity: 0,
-                          scale: 0.8,
-                          x: 0,
-                          z: -80 * i,
-                          rotateY: 0,
-                          rotateZ: 0,
-                        }}
+                        initial={{ opacity: 0, scale: 0.8, x: 0, z: -80 * i }}
                         animate={{
                           opacity: 1,
                           scale: 1,
@@ -274,11 +222,6 @@ export default function HomePage() {
                           rotateY: finalRY,
                           rotateZ: finalRZ,
                         }}
-                        transition={{
-                          duration: 1.2,
-                          delay: i * 0.2,
-                          ease: [0.25, 0.46, 0.45, 0.94],
-                        }}
                         whileHover={{
                           scale: 1.05,
                           y: -10,
@@ -286,6 +229,12 @@ export default function HomePage() {
                           z: 20,
                           transition: { duration: 0.3, ease: "easeOut" },
                         }}
+                        transition={{
+                          duration: 1.2,
+                          delay: i * 0.2,
+                          ease: [0.25, 0.46, 0.45, 0.94],
+                        }}
+                        onClick={() => router.push(card.link)}
                       >
                         <div className="absolute inset-0 bg-black/10 backdrop-blur-sm rounded-2xl" />
                         <div className="relative z-10 p-4 sm:p-6 h-full flex flex-col justify-between">
@@ -297,14 +246,18 @@ export default function HomePage() {
                           >
                             {card.title}
                           </motion.h3>
-                          <motion.div
-                            className="text-white/80 text-xs sm:text-sm"
+                          <motion.img
+                            src={
+                              typeof card.image === "string"
+                                ? card.image
+                                : card.image.src
+                            }
+                            alt={`${card.title} preview`}
+                            className="rounded-md mt-2 object-cover w-full h-20 sm:h-24"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.6, delay: 1 + i * 0.1 }}
-                          >
-                            Explore my {card.title.toLowerCase()}
-                          </motion.div>
+                          />
                         </div>
                       </motion.div>
                     );
@@ -314,11 +267,12 @@ export default function HomePage() {
             </AnimatePresence>
           </div>
         </div>
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex flex-col items-center justify-center  mb-8"
+          className="flex flex-col items-center justify-center mb-8"
         >
           <motion.p
             className={cn(
@@ -330,9 +284,7 @@ export default function HomePage() {
           </motion.p>
           <SlideButton
             className="transition-all duration-300 pt-0"
-            onSlideComplete={() => {
-              router.push("/projects");
-            }}
+            onSlideComplete={() => router.push("/projects")}
           />
         </motion.div>
       </div>

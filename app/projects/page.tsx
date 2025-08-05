@@ -27,49 +27,72 @@ const Projects = () => {
 
   const projects = [
     {
-      id: "insocial",
-      title: "inSocial",
+      id: "w-monitor",
+      title: "W-Monitor",
       description:
-        "A modern social networking platform that connects users through shared interests and vibrant communities.",
+        "Real-time monitoring dashboard built with cross-region job tracking using Amazon SQS.",
       longDescription:
-        "inSocial empowers users to build and join communities, share updates in real time, and host virtual events—driving engagement with sleek UX and real‑time chat.",
-      image: "/insocial.png?height=190&width=400",
+        "W-Monitor provides a sleek frontend for tracking distributed monitors across regions. It consumes messages from Amazon SQS to visualize job status, health, and uptime, offering responsive charts and dynamic filtering. Built entirely using React, Next.js, and TypeScript.",
+      image: "/wmonitor.jpeg?height=190&width=400",
       technologies: [
+        "React",
         "Next.js",
         "TypeScript",
         "Tailwind CSS",
-        "Firebase",
-        "Socket.IO",
+        "Amazon SQS",
       ],
-      stats: { users: "20K+", posts: "100K+", communities: "1K+" },
+      stats: { monitors: "50+", regions: "3", uptime: "99.99%" },
+      icon: Globe,
+      links: {
+        github: "https://github.com/mayank2153/W-Monitor",
+        // live: "#", // Not deployed yet
+        // demo: "#",
+      },
+    },
+    {
+      id: "insocial",
+      title: "inSocial",
+      description:
+        "Anonymous social media app for secure posting and private chat with real-time updates.",
+      longDescription:
+        "inSocial is a minimalist, anonymous-first social platform built for open expression. Features include secure posting, real-time private messaging using WebSockets, and category-based content discovery. Built with a responsive UI using React and Tailwind CSS.",
+      image: "/insocial.png?height=190&width=400",
+      technologies: [
+        "React.js",
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "WebSockets",
+        "Tailwind CSS",
+      ],
+      stats: { users: "100+", posts: "200+", chats: "50+" },
       icon: Users,
-      links: { github: "#", live: "#", demo: "#" },
+      links: {
+        github: "https://github.com/mayank2153/inSocial",
+        live: "https://insocial.tech",
+      },
     },
     {
       id: "campussync",
       title: "CampusSync",
       description:
-        "An integrated student management system synchronizing academic schedules, assignments, and communication.",
+        "University ERP solution with attendance tracking, finance management, and secure access.",
       longDescription:
-        "CampusSync streamlines campus life by unifying timetables, assignment tracking, and teacher‑student messaging into a single, mobile‑friendly portal.",
+        "CampusSync is a full-featured management platform for academic institutions. It integrates student attendance tracking, financial workflows, and real-time messaging via WebSockets. Built with Next.js, PostgreSQL, and Google login authentication.",
       image: "/campussync.png?height=190&width=400",
-      technologies: ["React", "Node.js", "PostgreSQL", "Prisma", "GraphQL"],
-      stats: { students: "5K+", classes: "200+", messages: "500K+" },
+      technologies: [
+        "Next.js",
+        "TypeScript",
+        "PostgreSQL",
+        "Prisma",
+        "Tailwind CSS",
+      ],
+      // stats: { institutions: "5+", modules: "6+", users: "2K+" },
       icon: Repeat,
-      links: { github: "#", live: "#", demo: "#" },
-    },
-    {
-      id: "w-monitor",
-      title: "W‑Monitor",
-      description:
-        "A real-time monitoring dashboard for servers and web applications, ensuring performance and uptime.",
-      longDescription:
-        "W‑Monitor offers live metrics, customizable alerts, and deep analytics—giving ops teams the insights they need to keep services running at peak performance.",
-      image: "/w-monitor.png?height=190&width=400",
-      technologies: ["Vue.js", "Django", "Redis", "Prometheus", "Grafana"],
-      stats: { metrics: "500+", alerts: "10K+", uptime: "99.99%" },
-      icon: Globe,
-      links: { github: "#", live: "#", demo: "#" },
+      links: {
+        github: "https://github.com/wraith2009/EMS",
+        live: "https://campussync.tech",
+      },
     },
   ];
 
@@ -240,16 +263,19 @@ const Projects = () => {
                             "bg-white/10 border-white/20"
                           )}
                         >
-                          {Object.entries(project.stats).map(([key, value]) => (
-                            <div key={key} className="text-center">
-                              <div className="text-xs text-white/80 capitalize">
-                                {key}
-                              </div>
-                              <div className="text-sm font-semibold text-white">
-                                {value}
-                              </div>
-                            </div>
-                          ))}
+                          {project.stats &&
+                            Object.entries(project.stats).map(
+                              ([key, value]) => (
+                                <div key={key} className="text-center">
+                                  <div className="text-xs text-white/80 capitalize">
+                                    {key}
+                                  </div>
+                                  <div className="text-sm font-semibold text-white">
+                                    {value}
+                                  </div>
+                                </div>
+                              )
+                            )}
                         </div>
                       </motion.div>
                     </div>
@@ -310,47 +336,6 @@ const Projects = () => {
                           </motion.span>
                         ))}
                       </motion.div>
-
-                      {/* Learn More Link */}
-                      <motion.div
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{
-                          opacity: hoveredProject === project.id ? 1 : 0.7,
-                          x: hoveredProject === project.id ? 0 : -10,
-                        }}
-                        className="flex items-center gap-2 text-sm font-medium group-hover:gap-3 transition-all duration-300"
-                      >
-                        <span
-                          className={cn(
-                            "transition-colors",
-                            isDark
-                              ? "text-purple-400 group-hover:text-purple-300"
-                              : "text-purple-600 group-hover:text-purple-700"
-                          )}
-                        >
-                          View Project
-                        </span>
-                        <motion.div
-                          animate={{
-                            x: hoveredProject === project.id ? [0, 4, 0] : 0,
-                          }}
-                          transition={{
-                            duration: 1.5,
-                            repeat:
-                              hoveredProject === project.id ? Infinity : 0,
-                            ease: "easeInOut",
-                          }}
-                        >
-                          <ArrowRight
-                            className={cn(
-                              "w-4 h-4 transition-colors",
-                              isDark
-                                ? "text-purple-400 group-hover:text-purple-300"
-                                : "text-purple-600 group-hover:text-purple-700"
-                            )}
-                          />
-                        </motion.div>
-                      </motion.div>
                     </MinimalCardContent>
                   </MinimalCard>
                 </motion.div>
@@ -384,7 +369,8 @@ const Projects = () => {
           </motion.p>
 
           <motion.a
-            href="#contact"
+            href="https://cal.com/mayank-sachdeva/15min"
+            target="_blank"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.4 }}

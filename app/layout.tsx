@@ -27,26 +27,21 @@ const inter = Inter({
 const shareLinks = [
   {
     icon: Twitter,
-    onClick: () => window.open("https://twitter.com/share"),
-    label: "Share on Twitter",
-  },
-  {
-    icon: Facebook,
-    onClick: () => window.open("https://facebook.com/share"),
-    label: "Share on Facebook",
+    onClick: () => window.open("https://x.com/mayankbytes"),
+    label: "X",
   },
   {
     icon: Linkedin,
-    onClick: () => window.open("https://linkedin.com/share"),
-    label: "Share on LinkedIn",
+    onClick: () =>
+      window.open("https://www.linkedin.com/in/mayank-sachdeva-559537224/"),
+    label: "LinkedIn",
   },
   {
     icon: LinkIcon,
     onClick: () => {
-      navigator.clipboard.writeText(window.location.href);
-      alert("Link copied to clipboard!");
+      window.open("https://www.mayanksachdeva.live/");
     },
-    label: "Copy link",
+    label: "Portfolio",
   },
 ];
 
@@ -140,7 +135,11 @@ export default function RootLayout({
     {
       title: "Resume",
       icon: Download,
-      onClick: () => window.open("/your-resume.pdf", "_blank"),
+      onClick: () =>
+        window.open(
+          "https://drive.google.com/file/d/1CRGWKtAnau8gQtPunT_iSK3BwGZh94ib/view?usp=sharing",
+          "_blank"
+        ),
       type: "action" as const,
     },
     {
